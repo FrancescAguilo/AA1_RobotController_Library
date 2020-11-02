@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+
+
 namespace RobotController
 {
 
@@ -53,6 +55,14 @@ namespace RobotController
             rot1 = NullQ;
             rot2 = NullQ;
             rot3 = NullQ;
+
+            MyVec _v;
+            _v.x = 0;
+            _v.y = 1;
+            _v.z = 0;
+            MyQuat _q = NullQ;
+
+            rot0 = Rotate(_q, _v, (float)Math.PI/2);
 
         }
 
@@ -160,6 +170,18 @@ namespace RobotController
 
             }
         }
+        private static MyVec NullV
+        {
+            get
+            {
+                MyVec a;
+                a.x = 0;
+                a.y = 0;
+                a.z = 0;
+                return a;
+
+            }
+        }
 
         internal MyQuat Multiply(MyQuat q1, MyQuat q2) {
 
@@ -179,19 +201,33 @@ namespace RobotController
         {
 
             //todo: change this so it takes currentRotation, and calculate a new quaternion rotated by an angle "angle" radians along the normalized axis "axis"
+            
+            
+            MyQuat rotationQuat;
+            rotationQuat.x = axis.x * (float) Math.Sin(angle / 2);
+            rotationQuat.y = axis.y * (float) Math.Sin(angle / 2);
+            rotationQuat.z = axis.z * (float) Math.Sin(angle / 2);
+            rotationQuat.w = (float) Math.Cos(angle / 2);
 
-            return NullQ;
+
+            return Normalize(Multiply(currentRotation, rotationQuat));
 
         }
-
-        internal MyVec 
-
 
         //todo: add here all the functions needed
-        internal void ForwardKinematics(MyQuat[] _joints, float[] _angles)
+
+        internal MyQuat Normalize(MyQuat _quat)
         {
-            MyVec prevPoint = 
+            MyQuat returnQuat = _quat;
+            float magnitude = (float)Math.Sqrt(Math.Pow(_quat.x, 2) + Math.Pow(_quat.y, 2) + Math.Pow(_quat.z, 2) + Math.Pow(_quat.w, 2));
+            returnQuat.x /= magnitude;
+            returnQuat.y /= magnitude;
+            returnQuat.z /= magnitude;
+            returnQuat.w /= magnitude;
+
+            return returnQuat;
         }
+
         #endregion
 
 
