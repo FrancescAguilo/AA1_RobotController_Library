@@ -61,9 +61,17 @@ namespace RobotController
             _v.y = 1;
             _v.z = 0;
             MyQuat _q = NullQ;
+            //_q.x = 0;
+            //_q.y = 1;
+            //_q.z = 0;
+            //_q.w = 0;
 
-            rot0 = Rotate(_q, _v, (float)Math.PI/2);
-
+            rot0 = Rotate(_q, _v, (float)Radians(70));
+            _v.y = 0;
+            _v.x = 1;
+            rot1 = Rotate(rot0, _v, (float)Radians(-10));
+            rot2 = Rotate(rot1, _v, (float)Radians(80));
+            rot3 = Rotate(rot2, _v, (float)Radians(25));
         }
 
 
@@ -226,6 +234,11 @@ namespace RobotController
             returnQuat.w /= magnitude;
 
             return returnQuat;
+        }
+
+        internal double Radians(double degree)
+        {
+            return (degree * (Math.PI / 180));
         }
 
         #endregion
