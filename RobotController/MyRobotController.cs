@@ -38,7 +38,7 @@ namespace RobotController
         public string Hi()
         {
 
-            string s = "hello world from my Robot Controller";
+            string s = "hello world from my Robot Controller _ Aguiló/Blas";
             return s;
 
         }
@@ -188,7 +188,17 @@ namespace RobotController
 
         }
 
+        internal MyQuat Normalize(MyQuat _quat)
+        {
+            MyQuat returnQuat = _quat;
+            float magnitude = (float)Math.Sqrt(Math.Pow(_quat.x, 2) + Math.Pow(_quat.y, 2) + Math.Pow(_quat.z, 2) + Math.Pow(_quat.w, 2));
+            returnQuat.x /= magnitude;
+            returnQuat.y /= magnitude;
+            returnQuat.z /= magnitude;
+            returnQuat.w /= magnitude;
 
+            return returnQuat;
+        }
 
 
         //todo: add here all the functions needed
