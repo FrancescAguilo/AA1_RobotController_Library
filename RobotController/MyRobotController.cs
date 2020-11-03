@@ -54,10 +54,10 @@ namespace RobotController
             //rot2 = NullQ;
             //rot3 = NullQ;
             float[] angles = new float[4];
-            angles[0] = 70;
+            angles[0] = 74;
             angles[1] = -10;
             angles[2] = 80;
-            angles[3] = 25;
+            angles[3] = 40;
 
             MyVec auxVec;
             auxVec.x = 0;
