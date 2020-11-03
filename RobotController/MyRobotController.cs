@@ -162,16 +162,29 @@ namespace RobotController
 
         internal MyQuat Multiply(MyQuat q1, MyQuat q2) {
 
-            //todo: change this so it returns a multiplication:
-            return NullQ;
+           
+            MyQuat returnQuat = NullQ;
+
+            returnQuat.x = q1.x * q2.w + q1.y * q2.z - q1.z * q2.y + q1.w * q2.x;
+            returnQuat.y = -q1.x * q2.z + q1.y * q2.w + q1.z * q2.x + q1.w * q2.y;
+            returnQuat.z = q1.x * q2.y - q1.y * q2.x + q1.z * q2.w + q1.w * q2.z;
+            returnQuat.w = -q1.x * q2.x - q1.y * q2.y - q1.z * q2.z + q1.w * q2.w;
+
+            return returnQuat;
 
         }
 
         internal MyQuat Rotate(MyQuat currentRotation, MyVec axis, float angle)
         {
 
-            //todo: change this so it takes currentRotation, and calculate a new quaternion rotated by an angle "angle" radians along the normalized axis "axis"
-            return NullQ;
+            MyQuat rotationQuat;
+            rotationQuat.x = axis.x * (float)Math.Sin(angle / 2);
+            rotationQuat.y = axis.y * (float)Math.Sin(angle / 2);
+            rotationQuat.z = axis.z * (float)Math.Sin(angle / 2);
+            rotationQuat.w = (float)Math.Cos(angle / 2);
+
+
+            return Normalize(Multiply(currentRotation, rotationQuat));
 
         }
 
