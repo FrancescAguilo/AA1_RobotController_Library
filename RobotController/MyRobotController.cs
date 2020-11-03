@@ -38,7 +38,7 @@ namespace RobotController
         public string Hi()
         {
 
-            string s = "hello world from my Robot Controller";
+            string s = "hello world from my Robot Controller _ Aguiló/Blas";
             return s;
 
         }
@@ -49,10 +49,28 @@ namespace RobotController
         public void PutRobotStraight(out MyQuat rot0, out MyQuat rot1, out MyQuat rot2, out MyQuat rot3) {
 
             //todo: change this, use the function Rotate declared below
+            //rot0 = NullQ;
+            //rot1 = NullQ;
+            //rot2 = NullQ;
+            //rot3 = NullQ;
+            float[] angles = new float[4];
+            angles[0] = 74;
+            angles[1] = -10;
+            angles[2] = 80;
+            angles[3] = 40;
+
+            MyVec auxVec;
+            auxVec.x = 0;
+            auxVec.y = 1;
+            auxVec.z = 0;
+
             rot0 = NullQ;
-            rot1 = NullQ;
-            rot2 = NullQ;
-            rot3 = NullQ;
+            rot0 = Rotate(rot0, auxVec, (float)Radians(angles[0]));
+            auxVec.y = 0;
+            auxVec.x = 1;
+            rot1 = Rotate(rot0, auxVec, (float)Radians(angles[1]));
+            rot2 = Rotate(rot1, auxVec, (float)Radians(angles[2]));
+            rot3 = Rotate(rot2, auxVec, (float)Radians(angles[3]));
         }
 
 
@@ -162,23 +180,50 @@ namespace RobotController
 
         internal MyQuat Multiply(MyQuat q1, MyQuat q2) {
 
-            //todo: change this so it returns a multiplication:
-            return NullQ;
+           
+            MyQuat returnQuat = NullQ;
+
+            returnQuat.x = q1.x * q2.w + q1.y * q2.z - q1.z * q2.y + q1.w * q2.x;
+            returnQuat.y = -q1.x * q2.z + q1.y * q2.w + q1.z * q2.x + q1.w * q2.y;
+            returnQuat.z = q1.x * q2.y - q1.y * q2.x + q1.z * q2.w + q1.w * q2.z;
+            returnQuat.w = -q1.x * q2.x - q1.y * q2.y - q1.z * q2.z + q1.w * q2.w;
+
+            return returnQuat;
 
         }
 
         internal MyQuat Rotate(MyQuat currentRotation, MyVec axis, float angle)
         {
 
-            //todo: change this so it takes currentRotation, and calculate a new quaternion rotated by an angle "angle" radians along the normalized axis "axis"
-            return NullQ;
+            MyQuat rotationQuat;
+            rotationQuat.x = axis.x * (float)Math.Sin(angle / 2);
+            rotationQuat.y = axis.y * (float)Math.Sin(angle / 2);
+            rotationQuat.z = axis.z * (float)Math.Sin(angle / 2);
+            rotationQuat.w = (float)Math.Cos(angle / 2);
+
+
+            return Normalize(Multiply(currentRotation, rotationQuat));
 
         }
 
+        internal MyQuat Normalize(MyQuat _quat)
+        {
+            MyQuat returnQuat = _quat;
+            float magnitude = (float)Math.Sqrt(Math.Pow(_quat.x, 2) + Math.Pow(_quat.y, 2) + Math.Pow(_quat.z, 2) + Math.Pow(_quat.w, 2));
+            returnQuat.x /= magnitude;
+            returnQuat.y /= magnitude;
+            returnQuat.z /= magnitude;
+            returnQuat.w /= magnitude;
 
+            return returnQuat;
+        }
 
+        internal double Radians(double degree)
+        {
+            return (degree * (Math.PI / 180));
+        }
 
-        //todo: add here all the functions needed
+        
 
         #endregion
 
