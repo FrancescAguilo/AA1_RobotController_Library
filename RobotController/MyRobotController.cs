@@ -49,10 +49,28 @@ namespace RobotController
         public void PutRobotStraight(out MyQuat rot0, out MyQuat rot1, out MyQuat rot2, out MyQuat rot3) {
 
             //todo: change this, use the function Rotate declared below
+            //rot0 = NullQ;
+            //rot1 = NullQ;
+            //rot2 = NullQ;
+            //rot3 = NullQ;
+            float[] angles = new float[4];
+            angles[0] = 70;
+            angles[1] = -10;
+            angles[2] = 80;
+            angles[3] = 25;
+
+            MyVec auxVec;
+            auxVec.x = 0;
+            auxVec.y = 1;
+            auxVec.z = 0;
+
             rot0 = NullQ;
-            rot1 = NullQ;
-            rot2 = NullQ;
-            rot3 = NullQ;
+            rot0 = Rotate(rot0, auxVec, (float)Radians(angles[0]));
+            auxVec.y = 0;
+            auxVec.x = 1;
+            rot1 = Rotate(rot0, auxVec, (float)Radians(angles[1]));
+            rot2 = Rotate(rot1, auxVec, (float)Radians(angles[2]));
+            rot3 = Rotate(rot2, auxVec, (float)Radians(angles[3]));
         }
 
 
@@ -200,8 +218,12 @@ namespace RobotController
             return returnQuat;
         }
 
+        internal double Radians(double degree)
+        {
+            return (degree * (Math.PI / 180));
+        }
 
-        //todo: add here all the functions needed
+        
 
         #endregion
 
