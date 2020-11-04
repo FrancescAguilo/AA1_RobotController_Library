@@ -33,7 +33,9 @@ namespace RobotController
         private float[] _initialAngles;
         private float[] _finalAngles;
         private MyVec[] _rotationAxis;
-        private MyQuat[] _totalRotation;
+
+        private bool _firstIteration;
+        private float _acumulator;
 
         #region public methods
 
@@ -59,6 +61,9 @@ namespace RobotController
             _rotationAxis[1].y = 0;
             _rotationAxis[1].z = 0;
             _rotationAxis[3] = _rotationAxis[2] = _rotationAxis[1];
+
+            _firstIteration = true;
+            _acumulator = 0;
         }
 
         public string Hi()
@@ -90,30 +95,37 @@ namespace RobotController
         public bool PickStudAnim(out MyQuat rot0, out MyQuat rot1, out MyQuat rot2, out MyQuat rot3)
         {
 
-            bool myCondition = false;
-            //todo: add a check for your condition
+
+            if(_firstIteration)
+            {
+                _acumulator = 0;
+                _firstIteration = false;
+            }
 
 
-
-            if (myCondition)
+            if (_acumulator <= 1)
             {
                 //todo: add your code here
+                rot0 = NullQ;
+                rot0 = Rotate(rot0, _rotationAxis[0], (float)Radians(lerp(_initialAngles[0],_finalAngles[0],_acumulator)));
+                rot1 = Rotate(rot0, _rotationAxis[1], (float)Radians(lerp(_initialAngles[1],_finalAngles[1],_acumulator)));
+                rot2 = Rotate(rot1, _rotationAxis[2], (float)Radians(lerp(_initialAngles[2],_finalAngles[2],_acumulator)));
+                rot3 = Rotate(rot2, _rotationAxis[3], (float)Radians(lerp(_initialAngles[3],_finalAngles[3],_acumulator)));
+
+                _acumulator += 0.0025f;
+                return true;
+            }
+            else
+            {
+                //todo: remove this once your code works.
                 rot0 = NullQ;
                 rot1 = NullQ;
                 rot2 = NullQ;
                 rot3 = NullQ;
 
-
-                return true;
+                return false;
             }
-
-            //todo: remove this once your code works.
-            rot0 = NullQ;
-            rot1 = NullQ;
-            rot2 = NullQ;
-            rot3 = NullQ;
-
-            return false;
+            
         }
 
 
