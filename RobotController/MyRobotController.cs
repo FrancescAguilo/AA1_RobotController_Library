@@ -30,10 +30,29 @@ namespace RobotController
 
     public class MyRobotController
     {
+        private float[] _initialAngles;
+        private MyVec[] _rotationAxis;
+        private MyQuat[] _totalRotation;
 
         #region public methods
 
+        public MyRobotController()
+        {
+            _initialAngles = new float[4];
+            _initialAngles[0] = 74;
+            _initialAngles[1] = -10;
+            _initialAngles[2] = 80;
+            _initialAngles[3] = 40;
 
+            _rotationAxis = new MyVec[4];
+            _rotationAxis[0].x = 0;
+            _rotationAxis[0].y = 1;
+            _rotationAxis[0].z = 0;
+            _rotationAxis[1].x = 1;
+            _rotationAxis[1].y = 0;
+            _rotationAxis[1].z = 0;
+            _rotationAxis[3] = _rotationAxis[2] = _rotationAxis[1];
+        }
 
         public string Hi()
         {
@@ -48,29 +67,11 @@ namespace RobotController
 
         public void PutRobotStraight(out MyQuat rot0, out MyQuat rot1, out MyQuat rot2, out MyQuat rot3) {
 
-            //todo: change this, use the function Rotate declared below
-            //rot0 = NullQ;
-            //rot1 = NullQ;
-            //rot2 = NullQ;
-            //rot3 = NullQ;
-            float[] angles = new float[4];
-            angles[0] = 74;
-            angles[1] = -10;
-            angles[2] = 80;
-            angles[3] = 40;
-
-            MyVec auxVec;
-            auxVec.x = 0;
-            auxVec.y = 1;
-            auxVec.z = 0;
-
             rot0 = NullQ;
-            rot0 = Rotate(rot0, auxVec, (float)Radians(angles[0]));
-            auxVec.y = 0;
-            auxVec.x = 1;
-            rot1 = Rotate(rot0, auxVec, (float)Radians(angles[1]));
-            rot2 = Rotate(rot1, auxVec, (float)Radians(angles[2]));
-            rot3 = Rotate(rot2, auxVec, (float)Radians(angles[3]));
+            rot0 = Rotate(rot0, _rotationAxis[0], (float)Radians(_initialAngles[0]));
+            rot1 = Rotate(rot0, _rotationAxis[1], (float)Radians(_initialAngles[1]));
+            rot2 = Rotate(rot1, _rotationAxis[2], (float)Radians(_initialAngles[2]));
+            rot3 = Rotate(rot2, _rotationAxis[3], (float)Radians(_initialAngles[3]));
         }
 
 
