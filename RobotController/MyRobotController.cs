@@ -31,6 +31,7 @@ namespace RobotController
     public class MyRobotController
     {
         private float[] _initialAngles;
+        private float[] _finalAngles;
         private MyVec[] _rotationAxis;
         private MyQuat[] _totalRotation;
 
@@ -43,6 +44,12 @@ namespace RobotController
             _initialAngles[1] = -10;
             _initialAngles[2] = 80;
             _initialAngles[3] = 40;
+
+            _finalAngles = new float[4];
+            _finalAngles[0] = 40;
+            _finalAngles[1] = -10;
+            _finalAngles[2] = 90;
+            _finalAngles[3] = 20;
 
             _rotationAxis = new MyVec[4];
             _rotationAxis[0].x = 0;
@@ -223,8 +230,12 @@ namespace RobotController
         {
             return (degree * (Math.PI / 180));
         }
-
         
+        internal float lerp(float a, float b, float f)
+        {
+            return a + f * (b - a);
+        }
+
 
         #endregion
 
