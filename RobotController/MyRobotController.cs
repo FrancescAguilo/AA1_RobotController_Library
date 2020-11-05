@@ -64,8 +64,8 @@ namespace RobotController
             _rotationAxis[1].z = 0;
             _rotationAxis[3] = _rotationAxis[2] = _rotationAxis[1];
             _rotationAxis[4].x = 0;
-            _rotationAxis[4].y = 0;
-            _rotationAxis[4].z = 1;
+            _rotationAxis[4].y = 1;
+            _rotationAxis[4].z = 0;
 
             _firstIteration = true;
             _acumulator = 0;
@@ -179,7 +179,7 @@ namespace RobotController
         {
             //todo: change the return value for exercise 3
             MyQuat returnQuat = NullQ;
-            returnQuat.z = rot3.z;
+            returnQuat.x = rot3.x;
             returnQuat.w = rot3.w;
             
             return Normalize(returnQuat);
@@ -191,7 +191,7 @@ namespace RobotController
         {
             //todo: change the return value for exercise 3
             MyQuat returnQuat = NullQ;
-            returnQuat.z = (rot3.w * rot3.y - rot3.x * rot3.z) / (float)Math.Sqrt(Math.Pow(rot3.w, 2) + Math.Pow(rot3.z, 2));
+            returnQuat.y = (rot3.w * rot3.y - rot3.x * rot3.z) / (float)Math.Sqrt(Math.Pow(rot3.w, 2) + Math.Pow(rot3.y, 2));
             returnQuat.w = rot3.w;
 
             return Normalize(returnQuat);
