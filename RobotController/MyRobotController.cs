@@ -41,19 +41,21 @@ namespace RobotController
 
         public MyRobotController()
         {
-            _initialAngles = new float[4];
+            _initialAngles = new float[5];
             _initialAngles[0] = 74;
             _initialAngles[1] = -10;
             _initialAngles[2] = 80;
             _initialAngles[3] = 40;
+            _initialAngles[4] = 0;
 
-            _finalAngles = new float[4];
+            _finalAngles = new float[5];
             _finalAngles[0] = 40;
             _finalAngles[1] = -10;
             _finalAngles[2] = 90;
             _finalAngles[3] = 20;
+            _finalAngles[4] = 90;
 
-            _rotationAxis = new MyVec[4];
+            _rotationAxis = new MyVec[5];
             _rotationAxis[0].x = 0;
             _rotationAxis[0].y = 1;
             _rotationAxis[0].z = 0;
@@ -61,6 +63,9 @@ namespace RobotController
             _rotationAxis[1].y = 0;
             _rotationAxis[1].z = 0;
             _rotationAxis[3] = _rotationAxis[2] = _rotationAxis[1];
+            _rotationAxis[4].x = 0;
+            _rotationAxis[4].y = 0;
+            _rotationAxis[4].z = 1;
 
             _firstIteration = true;
             _acumulator = 0;
@@ -84,6 +89,8 @@ namespace RobotController
             rot1 = Rotate(rot0, _rotationAxis[1], (float)Radians(_initialAngles[1]));
             rot2 = Rotate(rot1, _rotationAxis[2], (float)Radians(_initialAngles[2]));
             rot3 = Rotate(rot2, _rotationAxis[3], (float)Radians(_initialAngles[3]));
+
+            _firstIteration = true;
         }
 
 
@@ -136,32 +143,46 @@ namespace RobotController
         public bool PickStudAnimVertical(out MyQuat rot0, out MyQuat rot1, out MyQuat rot2, out MyQuat rot3)
         {
 
-            bool myCondition = false;
-            //todo: add a check for your condition
-
-
-
-            while (myCondition)
+            if (_firstIteration)
             {
-                //todo: add your code here
-
-
+                _acumulator = 0;
+                _firstIteration = false;
             }
 
-            //todo: remove this once your code works.
-            rot0 = NullQ;
-            rot1 = NullQ;
-            rot2 = NullQ;
-            rot3 = NullQ;
 
-            return false;
+            if (_acumulator <= 1)
+            {
+                //todo: add your code here
+                rot0 = NullQ;
+                rot0 = Rotate(rot0, _rotationAxis[0], (float)Radians(lerp(_initialAngles[0], _finalAngles[0], _acumulator)));
+                rot1 = Rotate(rot0, _rotationAxis[1], (float)Radians(lerp(_initialAngles[1], _finalAngles[1], _acumulator)));
+                rot2 = Rotate(rot1, _rotationAxis[2], (float)Radians(lerp(_initialAngles[2], _finalAngles[2], _acumulator)));
+                rot3 = Rotate(rot2, _rotationAxis[4], (float)Radians(lerp(_initialAngles[4], _finalAngles[4], _acumulator)));
+
+                _acumulator += 0.0025f;
+                return true;
+            }
+            else
+            {
+                //todo: remove this once your code works.
+                rot0 = NullQ;
+                rot1 = NullQ;
+                rot2 = NullQ;
+                rot3 = NullQ;
+
+                return false;
+            }
         }
 
 
         public static MyQuat GetSwing(MyQuat rot3)
         {
             //todo: change the return value for exercise 3
-            return NullQ;
+            MyQuat returnQuat = NullQ;
+            returnQuat.z = rot3.z;
+            returnQuat.w = rot3.w;
+            
+            return Normalize(returnQuat);
 
         }
 
@@ -169,7 +190,11 @@ namespace RobotController
         public static MyQuat GetTwist(MyQuat rot3)
         {
             //todo: change the return value for exercise 3
-            return NullQ;
+            MyQuat returnQuat = NullQ;
+            returnQuat.z = (rot3.w * rot3.y - rot3.x * rot3.z) / (float)Math.Sqrt(Math.Pow(rot3.w, 2) + Math.Pow(rot3.z, 2));
+            returnQuat.w = rot3.w;
+
+            return Normalize(returnQuat);
 
         }
 
@@ -226,7 +251,7 @@ namespace RobotController
 
         }
 
-        internal MyQuat Normalize(MyQuat _quat)
+        internal static MyQuat Normalize(MyQuat _quat)
         {
             MyQuat returnQuat = _quat;
             float magnitude = (float)Math.Sqrt(Math.Pow(_quat.x, 2) + Math.Pow(_quat.y, 2) + Math.Pow(_quat.z, 2) + Math.Pow(_quat.w, 2));
