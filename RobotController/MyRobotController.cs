@@ -30,15 +30,55 @@ namespace RobotController
 
     public class MyRobotController
     {
+        private float[] _initialAngles;
+        private float[] _finalAngles;
+        private MyVec[] _rotationAxis;
+
+        private bool _firstIteration_2;
+        private bool _firstIteration_3;
+        private float _acumulator;
+
+        private static MyQuat myTwist, mySwing;
 
         #region public methods
 
+        public MyRobotController()
+        {
+            _initialAngles = new float[5];
+            _initialAngles[0] = 74;
+            _initialAngles[1] = -10;
+            _initialAngles[2] = 80;
+            _initialAngles[3] = 40;
+            _initialAngles[4] = 0;
 
+            _finalAngles = new float[5];
+            _finalAngles[0] = 40;
+            _finalAngles[1] = -10;
+            _finalAngles[2] = 90;
+            _finalAngles[3] = 20;
+            _finalAngles[4] = 90;
+
+            _rotationAxis = new MyVec[5];
+            _rotationAxis[0].x = 0;
+            _rotationAxis[0].y = 1;
+            _rotationAxis[0].z = 0;
+            _rotationAxis[1].x = 1;
+            _rotationAxis[1].y = 0;
+            _rotationAxis[1].z = 0;
+            _rotationAxis[3] = _rotationAxis[2] = _rotationAxis[1];
+            _rotationAxis[4].x = 0;
+            _rotationAxis[4].y = 1;
+            _rotationAxis[4].z = 0;
+
+            _firstIteration_2 = true;
+            _firstIteration_3 = true;
+            _acumulator = 0;
+        }
 
         public string Hi()
         {
 
-            string s = "hello world from my Robot Controller";
+            string s = "hello world from my Robot Controller _ Aguiló/Blas";
             return s;
 
         }
@@ -48,11 +88,14 @@ namespace RobotController
 
         public void PutRobotStraight(out MyQuat rot0, out MyQuat rot1, out MyQuat rot2, out MyQuat rot3) {
 
-            //todo: change this, use the function Rotate declared below
             rot0 = NullQ;
-            rot1 = NullQ;
-            rot2 = NullQ;
-            rot3 = NullQ;
+            rot0 = Rotate(rot0, _rotationAxis[0], (float)Radians(_initialAngles[0]));
+            rot1 = Rotate(rot0, _rotationAxis[1], (float)Radians(_initialAngles[1]));
+            rot2 = Rotate(rot1, _rotationAxis[2], (float)Radians(_initialAngles[2]));
+            rot3 = Rotate(rot2, _rotationAxis[3], (float)Radians(_initialAngles[3]));
+
+            _firstIteration_2 = true;
+            _firstIteration_3 = true;
         }
 
 
@@ -64,30 +107,37 @@ namespace RobotController
         public bool PickStudAnim(out MyQuat rot0, out MyQuat rot1, out MyQuat rot2, out MyQuat rot3)
         {
 
-            bool myCondition = false;
-            //todo: add a check for your condition
+            _firstIteration_3 = true;
+            if (_firstIteration_2)
+            {
+                _acumulator = 0;
+                _firstIteration_2 = false;
+            }
 
 
-
-            if (myCondition)
+            if (_acumulator <= 1)
             {
                 //todo: add your code here
+                rot0 = NullQ;
+                rot0 = Rotate(rot0, _rotationAxis[0], (float)Radians(lerp(_initialAngles[0],_finalAngles[0],_acumulator)));
+                rot1 = Rotate(rot0, _rotationAxis[1], (float)Radians(lerp(_initialAngles[1],_finalAngles[1],_acumulator)));
+                rot2 = Rotate(rot1, _rotationAxis[2], (float)Radians(lerp(_initialAngles[2],_finalAngles[2],_acumulator)));
+                rot3 = Rotate(rot2, _rotationAxis[3], (float)Radians(lerp(_initialAngles[3],_finalAngles[3],_acumulator)));
+
+                _acumulator += 0.0025f;
+                return true;
+            }
+            else
+            {
+                //todo: remove this once your code works.
                 rot0 = NullQ;
                 rot1 = NullQ;
                 rot2 = NullQ;
                 rot3 = NullQ;
 
-
-                return true;
+                return false;
             }
-
-            //todo: remove this once your code works.
-            rot0 = NullQ;
-            rot1 = NullQ;
-            rot2 = NullQ;
-            rot3 = NullQ;
-
-            return false;
+            
         }
 
 
@@ -97,41 +147,63 @@ namespace RobotController
 
         public bool PickStudAnimVertical(out MyQuat rot0, out MyQuat rot1, out MyQuat rot2, out MyQuat rot3)
         {
-
-            bool myCondition = false;
-            //todo: add a check for your condition
-
-
-
-            while (myCondition)
+            _firstIteration_2 = true;
+            if (_firstIteration_3)
             {
-                //todo: add your code here
-
-
+                _acumulator = 0;
+                _firstIteration_3 = false;
             }
 
-            //todo: remove this once your code works.
-            rot0 = NullQ;
-            rot1 = NullQ;
-            rot2 = NullQ;
-            rot3 = NullQ;
 
-            return false;
+            if (_acumulator <= 1)
+            {
+                //todo: add your code here
+                rot0 = NullQ;
+                rot0 = Rotate(rot0, _rotationAxis[0], (float)Radians(lerp(_initialAngles[0], _finalAngles[0], _acumulator)));
+                rot1 = Rotate(rot0, _rotationAxis[1], (float)Radians(lerp(_initialAngles[1], _finalAngles[1], _acumulator)));
+                rot2 = Rotate(rot1, _rotationAxis[2], (float)Radians(lerp(_initialAngles[2], _finalAngles[2], _acumulator)));
+
+                //rot3 = Rotate(rot2, _rotationAxis[3], (float)Radians(lerp(_initialAngles[3], _finalAngles[3], _acumulator)));
+                //rot3 = Rotate(rot3, _rotationAxis[4], (float)Radians(lerp(_initialAngles[4], _finalAngles[4], _acumulator)));
+
+                mySwing = Rotate(rot2, _rotationAxis[3], (float)Radians(lerp(_initialAngles[3], _finalAngles[3], _acumulator)));
+                myTwist = Rotate(mySwing, _rotationAxis[4], (float)Radians(lerp(_initialAngles[4], _finalAngles[4], _acumulator)));
+
+                rot3 = Multiply(myTwist, mySwing);
+
+                _acumulator += 0.0025f;
+                return true;
+            }
+            else
+            {
+                //todo: remove this once your code works.
+                rot0 = NullQ;
+                rot1 = NullQ;
+                rot2 = NullQ;
+                rot3 = NullQ;
+
+                return false;
+            }
         }
 
 
-        public static MyQuat GetSwing(MyQuat rot3)
+        public static MyQuat GetSwing(MyQuat rot3) //JOINT 3
         {
             //todo: change the return value for exercise 3
-            return NullQ;
+
+            return Normalize(Multiply(Inverse(myTwist), rot3));
 
         }
 
 
-        public static MyQuat GetTwist(MyQuat rot3)
+        public static MyQuat GetTwist(MyQuat rot3)//JOINT 4
         {
             //todo: change the return value for exercise 3
-            return NullQ;
+            //MyQuat returnQuat = NullQ;
+            //returnQuat.y = rot3.y;
+            //returnQuat.w = rot3.w;
+
+            return Normalize(Multiply(rot3, Inverse(mySwing)));
 
         }
 
@@ -160,25 +232,69 @@ namespace RobotController
             }
         }
 
-        internal MyQuat Multiply(MyQuat q1, MyQuat q2) {
+        internal static MyQuat Multiply(MyQuat q1, MyQuat q2) {
 
-            //todo: change this so it returns a multiplication:
-            return NullQ;
+           
+            MyQuat returnQuat = NullQ;
+
+            returnQuat.x = q1.x * q2.w + q1.y * q2.z - q1.z * q2.y + q1.w * q2.x;
+            returnQuat.y = -q1.x * q2.z + q1.y * q2.w + q1.z * q2.x + q1.w * q2.y;
+            returnQuat.z = q1.x * q2.y - q1.y * q2.x + q1.z * q2.w + q1.w * q2.z;
+            returnQuat.w = -q1.x * q2.x - q1.y * q2.y - q1.z * q2.z + q1.w * q2.w;
+
+            return returnQuat;
 
         }
 
-        internal MyQuat Rotate(MyQuat currentRotation, MyVec axis, float angle)
+        internal static MyQuat Rotate(MyQuat currentRotation, MyVec axis, float angle)
         {
 
-            //todo: change this so it takes currentRotation, and calculate a new quaternion rotated by an angle "angle" radians along the normalized axis "axis"
-            return NullQ;
+            MyQuat rotationQuat;
+            rotationQuat.x = axis.x * (float)Math.Sin(angle / 2);
+            rotationQuat.y = axis.y * (float)Math.Sin(angle / 2);
+            rotationQuat.z = axis.z * (float)Math.Sin(angle / 2);
+            rotationQuat.w = (float)Math.Cos(angle / 2);
+
+
+            return Normalize(Multiply(currentRotation, rotationQuat));
 
         }
 
+        internal static MyQuat Normalize(MyQuat _quat)
+        {
+            MyQuat returnQuat = _quat;
+            float magnitude = (float)Math.Sqrt(Math.Pow(_quat.x, 2) + Math.Pow(_quat.y, 2) + Math.Pow(_quat.z, 2) + Math.Pow(_quat.w, 2));
+            returnQuat.x /= magnitude;
+            returnQuat.y /= magnitude;
+            returnQuat.z /= magnitude;
+            returnQuat.w /= magnitude;
 
+            return returnQuat;
+        }
 
+        internal static MyQuat Inverse(MyQuat _quat)
+        {
+            MyQuat result;
+            float num = 1f / ((float)Math.Pow(_quat.x,2) + (float)Math.Pow(_quat.y, 2) + (float)Math.Pow(_quat.z, 2) + (float)Math.Pow(_quat.w, 2));
 
-        //todo: add here all the functions needed
+            result.x = -_quat.x * num;
+            result.y = -_quat.y * num;
+            result.z = -_quat.z * num;
+            result.w = _quat.w * num;
+
+            return result;
+        }
+
+        internal double Radians(double degree)
+        {
+            return (degree * (Math.PI / 180));
+        }
+        
+        internal float lerp(float a, float b, float f)
+        {
+            return a + f * (b - a);
+        }
+
 
         #endregion
 
